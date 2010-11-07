@@ -11,7 +11,7 @@ REAL_IMAGE = Magick::Image.read(ARGV[0]).first
 
 module Giochonda
        
-  class ProblemProxy < BeesSolver::Bee
+  class ProblemProxy
 
     def initialize(canvas = Canvas.new(REAL_IMAGE.columns, REAL_IMAGE.rows, NUM_POLYGONS, NO_OF_POINTS))
       @canvas = canvas
@@ -50,13 +50,9 @@ module Giochonda
   class Monitor
     attr_accessor :fittest
   
-    def starting_step(i)
-      puts "Iteration #{i}"
-    end
-    
-    def fittest=(fittest)
-      puts "Fittest: #{fittest.fitness}"
-      fittest.draw
+    def starting_step(i, best, answer)
+      puts "Iteration: #{i} Fitness: #{best.fitness}, Answer: #{answer}"
+      best.domain_proxy.draw
       GL::glFlush
     end
   end
@@ -89,7 +85,7 @@ module Giochonda
 end
 
 monitor = Giochonda::Monitor.new
-solver = BeesSolver::Solver.new(0, 10, 1, 1, 10, 0, 0.2, monitor, Giochonda::ProblemProxy)
+solver = BeesSolver::Solver.new(0, 0, 1, 1, 1.0, monitor, Giochonda::ProblemProxy)
 solver.seed
 # solution = solver.solve
 

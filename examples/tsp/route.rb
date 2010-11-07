@@ -38,7 +38,7 @@ module TSP
   
     def explore(distance, i)
       removed = []
-      rand(@cities.size * distance).times { removed << @cities.delete_rand }
+      [rand(@cities.size * distance), 4].max.times { removed << @cities.delete_rand }
       
       # until removed.empty?
       #   @cities.insert_rand(removed.delete_rand)
@@ -51,7 +51,7 @@ module TSP
     end
     
     def insert_nearest(city, distance)
-      n_idx = rand(10 * distance)
+      n_idx = rand(@cities.size * distance)
       n_city = @near_matrix[city][n_idx]
       idx = @cities.index(n_city)
       while idx.nil?
