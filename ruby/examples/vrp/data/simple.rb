@@ -1,28 +1,29 @@
-# require "../route"
-# require "../city"
-# require "../location"
+package com.visfleet.beessolver.vrp.data
 
-module TSP
-
-  module Simple
-    DATA = [
-      [1, 0, 0],
-      [2, 1, 0],
-      [3, 1, 1],
-      [4, 0, 1],
-    ]
-
-    def self.cities
-      cities = []
-      DATA.each do |d|
-        cities << City.new(d[0], Location.new(d[1], d[2]))
-      end
-      cities
-    end
+case class Simple {
   
-  end
+  val data:List = [
+  ]
   
-end
+}
 
+  # module Simple
+  #   DATA = [
+  #     [1, 0, 0],
+  #     [2, 1, 0],
+  #     [3, 1, 1],
+  #     [4, 0, 1],
+  #   ]
+  # 
+  #   def self.cities
+  #     cities = []
+  #     DATA.each do |d|
+  #       cities << City.new(d[0], Location.new(d[1], d[2]))
+  #     end
+  #     cities
+  #   end
+  # 
+  # end
+  
 # r = TSP::Route.new(TSP::Simple.cities)
 # p r.distance

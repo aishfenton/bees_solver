@@ -1,16 +1,16 @@
 package com.visfleet.beessolver.vrp;
 
 import scala.collection.mutable.ArrayBuffer
-import scala.util.Random
 
-class Route(depot: Location, maxRouteTime: Double, maxCapacity: Double) {
+class Route(depot: Location, maxRouteTime: Double, maxCapacity: Double, var jobs:ArrayBuffer[Job] = new ArrayBuffer[Job]) {
 
-  var jobs = new ArrayBuffer[Job]
-
-  def copy = {
-    //       @visits = orig.visits.dup
+  def copy(depot: Location = this.depot,
+           maxRouteTime: Double = this.maxRouteTime, 
+           maxCapacity: Double = this.maxCapacity, 
+           jobs: ArrayBuffer[Job] = this.jobs.clone): Route = {
+    new Route(depot, maxRouteTime, maxCapacity, jobs)
   }
-  
+
   def +=(job: Job): Route = { jobs += job; this }
   
   def distance = {
@@ -33,47 +33,16 @@ class Route(depot: Location, maxRouteTime: Double, maxCapacity: Double) {
  
   override def toString = jobs.toString
   
-}
-
-
-  //     include Enumerable
-  // 
-  //     def delete_rand
-  //       @visits.delete_rand
-  //     end
-  //           
-  //     def <<(customer)
-  //       raise "Nil city passed in" if customer == nil
-  // 
-  //       @visits << customer
-  //       self
-  //     end
-  //     
-  //     def [](index)
-  //       @visits[index]
-  //     end
-  // 
-  //     def []=(index, customer)
-  //       raise "Index outside of bounds" if index < 0 || index >= size
-  //       raise "Nil customer passed in" if customer == nil
-  //     
-  //       @visits[index] = customer
-  //     end
-  //   
-  //     def index(customer)
-  //       @visits.index(customer)
-  //     end
-  //     
-  //     def size
-  //       @visits.size
-  //     end
-  // 
-  //     def insert(index, *values)
-  //       raise Exception.new('Inserted past end of visits array:' + index.to_s) if index > @visits.size
-  //       @visits.insert(index, *values)
-  //     end
-  // 
-  //   end
-  // 
-  // end
+  def removeRandom = CollectionUtil.removeRandom(jobs)
   
+  def indexOf(job: Job) = jobs.indexOf(job)
+
+  def insert(idx: Int, job: Job) = jobs.insert(idx, job)
+
+  def apply(idx: Int) = jobs.apply(idx)
+
+  def update(idx: Int, job: Job) = jobs.update(idx, job)
+
+  def size = jobs.size
+    
+}
