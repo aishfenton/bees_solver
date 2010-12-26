@@ -1,8 +1,9 @@
 package com.visfleet.beessolver
 
 import com.visfleet.beessolver.vrp._
+import com.visfleet.beessolver.vrp.data._
 
-class Solver(iterations: Int, noSites: Int, noWorkerBees: Int, noMoves: Int, exploreDistance: Double, domainFunc: => Domain) {
+class Solver(iterations: Int, noSites: Int, noWorkerBees: Int, noMoves: Int, exploreDistance: Double, domainFunc: => Domain, monitorFunc: (Int, Double, Domain) => Unit) {
 
   val sites = new Array[Site](noSites)
   
@@ -13,14 +14,13 @@ class Solver(iterations: Int, noSites: Int, noWorkerBees: Int, noMoves: Int, exp
       step(i)
 
     // return the best fitness
-    sites.sortWith { (a,b) => a.bestBee.fitness > b.bestBee.fitness }(0).bestBee.fitness
+    sites.sortWith { (a,b) => a.bestBee.fitness > b.bestBee.fitness }(0).bestBee
   }
 
   def step(i: Int) = {
 
-    if (i % 5 == 0) {
-      println("Iteration:" + i)
-      println("Best bees: " + (sites map { _.bestBee.fitness } toList))
+    if (i % 100 == 0) {
+      sites.map { _.bestBee }.sortWith { _.fitness > _.fitness }.foreach( (bee: Bee) => monitorFunc(i, bee.fitness, bee.domain) )
     }
 
     for (site <- sites) {
@@ -38,10 +38,25 @@ class Solver(iterations: Int, noSites: Int, noWorkerBees: Int, noMoves: Int, exp
 }
 
 object Solver {
+  
+  // val problem = Simple
+  val problem = AN32K5
+  
   def main(args: Array[String]) {
-    val solver = new Solver(30000, 2, 5, 3, 0.5, new Schedule(0, new Location(0,0), 10, 10, 
-      Array(new Job("job 1", new Location(1,1), 1.0, 1.0))))
-    println("Final answer: " + solver.solve)
+    val solver = new Solver(100000, 3, 3, 3, 0.1, new Schedule(
+      problem.MaxVehicles,
+      problem.Depot,
+      problem.MaxCapacity,
+      problem.MaxRouteTime,
+      problem.Jobs
+      ),
+      (i: Int, fitness: Double, domain: Domain) => {
+        val schedule = domain.asInstanceOf[Schedule]
+        println(i, fitness, schedule.distance)
+      }
+    )
+    var solution = solver.solve
+    println("Final answer: " + solution, solution.fitness)
   }
+  
 }
-

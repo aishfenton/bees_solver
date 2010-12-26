@@ -16,22 +16,24 @@ class Route(depot: Location, maxRouteTime: Double, maxCapacity: Double, var jobs
   def distance = {
     var p = depot
     
-    jobs.foldLeft(0.0) { (r, c) => 
+    var r = jobs.foldLeft(0.0) { (r, c) => 
       val d = p.distanceTo(c.location)
       p = c.location
       r + d
     }
+    // and back again to depot
+    r + p.distanceTo(depot)
   }
 
-  def overtime = math.min(this.serviceTime - maxRouteTime, 0.0)
+  def overtime = math.max(this.serviceTime - maxRouteTime, 0.0)
 
-  def overload = math.min(this.load - maxCapacity, 0.0)
+  def overload = math.max(this.load - maxCapacity, 0.0)
   
   def load = jobs.foldLeft(0.0)((r,c) => r + c.quantity)
 
   def serviceTime = jobs.foldLeft(0.0)((r,c) => r + c.serviceTime)
  
-  override def toString = jobs.toString
+  override def toString = jobs.foldLeft("R:")(_ + _.toString + ",")
   
   def removeRandom = CollectionUtil.removeRandom(jobs)
   
@@ -44,5 +46,7 @@ class Route(depot: Location, maxRouteTime: Double, maxCapacity: Double, var jobs
   def update(idx: Int, job: Job) = jobs.update(idx, job)
 
   def size = jobs.size
+  
+  def isEmpty = jobs.isEmpty
     
 }

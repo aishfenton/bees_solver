@@ -15,8 +15,8 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
   val overload = routes.foldLeft(0.0)((r,c) => r + c.overload)
 
   val fitness: Double = {
-    - ( this.distance )
-    // - ( this.distance + (this.overtime * 2) + (this.overload * 2) )
+    // - ( this.distance )
+    - ( this.distance + (this.overtime * 100) + (this.overload * 100) )
   }
 
   Schedule.initNearMatrix(jobs)
@@ -37,7 +37,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     var usedJobs = new HashMap[Job, Boolean]
     var newRoutes = new ArrayBuffer[Route]
     
-    for (i <- 0 to maxVehicles) {
+    for (i <- 0 until maxVehicles) {
       newRoutes += new Route(depot, maxRouteTime, maxCapacity)
       newRoutes.last += CollectionUtil.selectRandomAndUnused(jobs, usedJobs)
     }
@@ -50,41 +50,48 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     this.copy(routes = newRoutes)
   }
 
-  def explore(distance: Double, i: Int): Domain = {
+  def explore(eDistance: Double, i: Int): Domain = {
     var newRoutes = routes.map(_.copy())
-    lns(newRoutes, distance)
+    lns(newRoutes, eDistance)
     this.copy(routes = newRoutes)
   }
+  
+  override def toString = routes.foldLeft("")( _ + _.toString + "\n" )
 
 // -----------
 // Private
 // -----------
 
-  private def lns(routes: ArrayBuffer[Route], distance: Double) = {
+  private def lns(routes: ArrayBuffer[Route], eDistance: Double) = {
     
     // remove some random job
     var removed = new ArrayBuffer[Job]
     
-    for (i <- 0 until Random.nextInt((jobs.size * distance).toInt))
-      removed += CollectionUtil.rand(routes).removeRandom
+    for (i <- 0 until Random.nextInt((jobs.size * eDistance * 2).toInt)) {
+      var route = CollectionUtil.rand(routes)
+      while(route.isEmpty) {
+        route = CollectionUtil.rand(routes)
+      }
+      removed += route.removeRandom
+    }
     
     while (removed.nonEmpty) {
       var job = CollectionUtil.removeRandom(removed)
-      insertNearest(routes, job, distance)
+      insertNearest(routes, job, eDistance)
     }
     
   }
 
-  private def insertNearest(routes: ArrayBuffer[Route], job: Job, distance: Double) = {
+  private def insertNearest(routes: ArrayBuffer[Route], job: Job, eDistance: Double) = {
     
     def nearestIndex(job: Job, offset: Int) = {
       indexOf(routes, nearestJob(job, offset))
     }
     
-    var offset = Random.nextInt((jobs.size * distance * 2).toInt)    
+    var offset = Random.nextInt((jobs.size * eDistance * 1).toInt)    
     var idxs = nearestIndex(job, offset)
 
-    while (idxs._1 != -1) {
+    while (idxs._1 == -1) {
       offset += 1
       idxs = nearestIndex(job, offset)
     }
@@ -106,9 +113,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     (-1, -1)
   }
 
-
 }
-
 
 object Schedule {
   
@@ -123,5 +128,3 @@ object Schedule {
   }
   
 }
-
-

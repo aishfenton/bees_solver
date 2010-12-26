@@ -2,15 +2,17 @@ package com.visfleet.beessolver
 
 import scala.collection.mutable.HashMap
 
-class Bee(domain: Domain) {
+class Bee(aDomain: Domain) {
       
   val fitness = domain.fitness
+  
+  def domain = aDomain
   
   def explore(exploreDistance: Double, i: Int): Bee = {
     var aDomain = domain.explore(exploreDistance, i)
 
     var count = 0
-    while (Bee.usedPositions.contains(aDomain.positionHash) && count < 10) {
+    while (Bee.usedPositions.contains(aDomain.positionHash) && count < 30) {
       count += 1
       // print(".")
       aDomain = domain.explore(exploreDistance, i)
@@ -42,4 +44,5 @@ object Bee {
     var domain: Domain = domainFunc
     new Bee(domain.randomPosition)
   }
+  
 }

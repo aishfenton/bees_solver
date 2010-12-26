@@ -17,7 +17,7 @@ object CollectionUtil {
     item
   }
 
-  def rand[A](seq: IndexedSeq[A]) = seq(Random.nextInt(seq.length))
+  def rand[A](seq: IndexedSeq[A]) = seq(Random.nextInt(seq.size))
  
   def removeRandom[A](seq: Buffer[A]) = seq.remove(Random.nextInt(seq.length))
   
