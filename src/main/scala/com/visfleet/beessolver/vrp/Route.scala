@@ -21,7 +21,7 @@ class Route(depot: Location, maxRouteTime: Double, maxCapacity: Double, var jobs
       p = c.location
       r + d
     }
-    // and back again to depot
+    // and back again
     r + p.distanceTo(depot)
   }
 

@@ -7,6 +7,9 @@ import scala.util.Random
 
 class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double, 
                maxRouteTime: Double, jobs: Array[Job], routes: ArrayBuffer[Route] = new ArrayBuffer[Route]) extends Object with Domain {
+
+  val LNSRemove = 1
+  val LNSOffset = 1
     
   val distance = routes.foldLeft(0.0)((r,c) => r + c.distance)
 
@@ -22,7 +25,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
   Schedule.initNearMatrix(jobs)
   
   def copy(maxVehicles: Int = this.maxVehicles, 
-           depot: Location = this.depot, 
+           depot: Location = this.depot,
            maxCapacity: Double = this.maxCapacity, 
            maxRouteTime: Double = this.maxRouteTime, 
            jobs: Array[Job] = this.jobs, 
@@ -30,7 +33,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     new Schedule(maxVehicles, depot, maxCapacity, maxRouteTime, jobs, routes)
   }
 
-  def positionHash = this.fitness.hashCode
+  def positionHash = this.fitness.toString.hashCode
   
   def randomPosition: Domain = {
     
@@ -67,7 +70,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     // remove some random job
     var removed = new ArrayBuffer[Job]
     
-    for (i <- 0 until Random.nextInt((jobs.size * eDistance * 2).toInt)) {
+    for (i <- 0 until Random.nextInt((jobs.size * eDistance * LNSRemove).toInt)) {
       var route = CollectionUtil.rand(routes)
       while(route.isEmpty) {
         route = CollectionUtil.rand(routes)
@@ -88,7 +91,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
       indexOf(routes, nearestJob(job, offset))
     }
     
-    var offset = Random.nextInt((jobs.size * eDistance * 1).toInt)    
+    var offset = Random.nextInt((jobs.size * eDistance * LNSOffset).toInt)    
     var idxs = nearestIndex(job, offset)
 
     while (idxs._1 == -1) {

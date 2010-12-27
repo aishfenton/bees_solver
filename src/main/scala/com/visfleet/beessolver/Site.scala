@@ -12,7 +12,7 @@ class Site(noWorkerBees: Int, domainFunc: => Domain) {
     // we keep an array of all the best positions from this explore
     var positions = new ArrayBuffer[Bee]
 
-    positions += bestBee
+    positions += bestBee.exploreIfUsed(exploreDistance, i)
     for (bee <- bees) {
       for (j <- 0 to noMoves) {
         positions += bee.explore(exploreDistance, i)

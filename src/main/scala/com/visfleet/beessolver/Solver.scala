@@ -20,9 +20,11 @@ class Solver(iterations: Int, noSites: Int, noWorkerBees: Int, noMoves: Int, exp
   def step(i: Int) = {
 
     if (i % 100 == 0) {
+      println("---------------")
       sites.map { _.bestBee }.sortWith { _.fitness > _.fitness }.foreach( (bee: Bee) => monitorFunc(i, bee.fitness, bee.domain) )
     }
 
+    World.clear
     for (site <- sites) {
       site.explore(noMoves, exploreDistance, i)
     }
@@ -33,7 +35,7 @@ class Solver(iterations: Int, noSites: Int, noWorkerBees: Int, noMoves: Int, exp
     for (i <- 0 until noSites) {
       sites(i) = Site.randomPosition(noWorkerBees, domainFunc)
     }
-  }
+  } 
   
 }
 
@@ -43,7 +45,7 @@ object Solver {
   val problem = AN32K5
   
   def main(args: Array[String]) {
-    val solver = new Solver(100000, 3, 3, 3, 0.1, new Schedule(
+    val solver = new Solver(100000, 25, 3, 2, 0.2, new Schedule(
       problem.MaxVehicles,
       problem.Depot,
       problem.MaxCapacity,
@@ -52,7 +54,7 @@ object Solver {
       ),
       (i: Int, fitness: Double, domain: Domain) => {
         val schedule = domain.asInstanceOf[Schedule]
-        println(i, fitness, schedule.distance)
+        println(i, fitness, schedule.distance, World.size)
       }
     )
     var solution = solver.solve
