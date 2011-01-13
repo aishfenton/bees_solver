@@ -10,35 +10,32 @@ package com.visfleet.beessolver.vrp.data
 import com.visfleet.beessolver.vrp.Location
 import com.visfleet.beessolver.vrp.Job
 
-object Simple {
+object Simple extends Problem {
   
-  val MaxVehicles = 1
-  val MaxCapacity = 100
-  val MaxRouteTime = 999999
-  val ServiceTime = 0
-  val Depot = new Location(0, 0)
+  def maxVehicles = 1
+  def maxCapacity = 100
+  def maxRouteTime = 999999
+  def depot = new Location(0, 0)
   
-  private val data = List(
-    ("A", 1, 0),
-    ("B", 2, 0),
-    ("C", 3, 0),
-    ("D", 3, 1),
-    ("E", 3, 2),
-    ("F", 3, 3),
-    ("G", 2, 3),
-    ("H", 1, 3),
-    ("I", 0, 3),
-    ("J", 0, 2),
-    ("K", 0, 1)
-  )
+  def jobs = ImportUtil.toJobs(List(
+    (2,  1, 0, 0),
+    (3,  2, 0, 0),
+    (4,  3, 0, 0),
+    (5,  3, 1, 0),
+    (6,  3, 2, 0),
+    (7,  3, 3, 0),
+    (8,  2, 3, 0),
+    (9,  1, 3, 0),
+    (10, 0, 3, 0),
+    (11, 0, 2, 0),
+    (12, 0, 1, 0)
+  ))
+
+  def solution = 12
+
+  def solutionFull = ImportUtil.toSolution(this, List(
+    List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+  ))
   
-  val Jobs = {
-    val arr = new Array[Job](data.size)
-    for (i <- 0 until arr.size) {
-      var d = data(i)
-      arr(i) = new Job(d._1.toString, new Location(d._2, d._3), 0, 0)
-    }
-    arr
-  }
 
 }

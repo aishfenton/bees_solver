@@ -8,16 +8,16 @@ import scala.collection.mutable.Buffer
 
 object CollectionUtil {
 
-  def selectRandomAndUnused[A](seq: IndexedSeq[A], used: Map[A, Boolean]): A = {
+  def selectRandomAndUnused[A](seq: Seq[A], used: Map[A, Boolean]): A = {
     var item = seq(Random.nextInt(seq.length))
     while (used.contains(item)) {
-      item = seq(Random.nextInt(seq.length))
+      item = seq(Random.nextInt(seq.size))
     }
     used(item) = true
     item
   }
 
-  def rand[A](seq: IndexedSeq[A]) = seq(Random.nextInt(seq.size))
+  def rand[A](seq: Seq[A]) = seq(Random.nextInt(seq.size))
  
   def removeRandom[A](seq: Buffer[A]) = seq.remove(Random.nextInt(seq.length))
   
