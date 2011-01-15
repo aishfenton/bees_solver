@@ -8,6 +8,8 @@ trait Domain {
   def positionHash: String
   
   def myCopy: Domain
+
+  def isFeasible: Boolean
   
 }
 

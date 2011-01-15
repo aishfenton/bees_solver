@@ -19,6 +19,8 @@ class Site(noWorkerBees: Int, domainFunc: => Domain, age: Int = 0, bees: Array[B
     new Site(noWorkerBees, this.domainFunc, age, bees)
   }
   
+  def isFeasible = bestBee.isFeasible
+  
   def explore(noMoves: Int, exploreDistance: Double, i: Int): Site = {
 
     // EXPERIMENT TO USE AGE TO RESET BAD SITES
@@ -35,13 +37,13 @@ class Site(noWorkerBees: Int, domainFunc: => Domain, age: Int = 0, bees: Array[B
       }
     }
         
-    val avg = positions.foldLeft(0.0)(_ + _.fitness) / positions.size
-    if (Random.nextDouble < ( (fitness - avg) / 50 ) || age < 100000) {
+    // val avg = positions.foldLeft(0.0)(_ + _.fitness) / positions.size
+    // if (Random.nextDouble < ( (fitness - avg) / 50 ) || age < 100000) {
       positions += bestBee.exploreIfUsed(age / 1000, i)
       // positions += bestBee.exploreIfUsed(exploreDistance, i)
-    } else {
-      World.makeTabu(bestBee.theDomain)
-    }
+    // } else {
+    //   World.makeTabu(bestBee.theDomain)
+    // }
     
     positions = positions.sortWith( (a,b) => a.fitness > b.fitness )
 
@@ -56,6 +58,16 @@ class Site(noWorkerBees: Int, domainFunc: => Domain, age: Int = 0, bees: Array[B
   //   pos = if (avg < fitness) 0 else pos
  
   def bestBee = bees(0)
+
+  def mate(seedSite: Site) = {
+    
+    var aBees = new ArrayBuffer[Bee]
+    aBees ++= bees.slice(0, (this.bees.size / 2.0).floor.toInt)
+    aBees ++= bees.slice(0, (seedSite.theBees.size / 2.0).ceil.toInt)
+    this.copy(bees = aBees.toArray, age = 0)
+  }
+
+  protected def theBees = bees
    
 }
 

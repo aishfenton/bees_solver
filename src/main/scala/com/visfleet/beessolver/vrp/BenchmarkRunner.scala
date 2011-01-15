@@ -24,7 +24,7 @@ object BenchmarkRunner {
     val clazz = Class.forName("com.visfleet.beessolver.vrp.data." + problemStr + "$")
     val problem = clazz.getField("MODULE$").get(null).asInstanceOf[Problem]
 
-    val solver = new World(1000000, maxTime, 3, 5, 2, 0.4, new Schedule(
+    val solver = new World(1000000, maxTime, 10, 3, 1, 0.4, new Schedule(
       problem.maxVehicles,
       problem.depot,
       problem.maxCapacity,

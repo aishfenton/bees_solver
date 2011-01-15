@@ -11,7 +11,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
 
   type Position = (Int, Int)
 
-  val Penalty = 4
+  val Penalty = 50
     
   val distance = routes.foldLeft(0.0)((r,c) => r + c.distance)
 
@@ -71,6 +71,8 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
   }
   
   override def toString = routes.foldLeft("")( _ + _.toString + "\n" )
+
+  def isFeasible = (this.overtime + this.overload) == 0
 
   // def mate(domain: Domain) {
   //   p2 = domain.asInstanceOf[Schedule]

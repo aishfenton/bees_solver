@@ -26,7 +26,9 @@ class DatOut(directory: String, problem: Problem) extends Monitor {
 
   def bestSites(iteration: Int, duration: Long, bestSoFar: Domain, sites: Seq[Site]): Unit = {      
     val schedule = bestSoFar.asInstanceOf[Schedule]
-    val line = format.format(duration, iteration, schedule.distance, problem.bestKnownAnswer / schedule.distance)
+    val percent = if (schedule.isFeasible) problem.bestKnownAnswer / schedule.distance else 0.0
+    
+    val line = format.format(duration, iteration, schedule.distance, percent)
     out.write(line)
     print(line)
   }

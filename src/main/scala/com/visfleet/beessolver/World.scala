@@ -56,23 +56,28 @@ class World(iterations: Int, maxTime: Long, noSites: Int, noWorkerBees: Int, noM
     
     sites = sites.sortWith { _.fitness > _.fitness }
 
-    if (i % 20 == 0 && sites.size > 1)
-      sites = sites.slice(0, (sites.size * 0.99).toInt).toArray
+    // // Killing off worse site
+    // if (i % 1 == 0 && sites.size > 1)
+    //   sites = sites.slice(0, (sites.size * 0.99).toInt).toArray
+
+    // replacing worse site with bread one
+    if (i % 1 == 0) {
+      sites(sites.size - 1) = sites(sites.size - 1).mate(sites.head)
+    }
     
-    // TESTING KILLING OFF THE WORST ONE
-    // sites(sites.size - 1) = Site.randomPosition(noWorkerBees, domainFunc)
-    
-    if (answer.fitness < sites.head.fitness)
+    if (answer.fitness < sites.head.fitness && sites.head.isFeasible)
       answer = sites.head.bestBee.theDomain
   }
     
   private def doMonitor(i: Int, t: Long): Unit = {
-    if (t == alreadyTicked) {
+    val quanta = 5
+    var interval = (t / quanta).toInt
+    if (interval == alreadyTicked) {
       return
     }
     else {
-      alreadyTicked = t
-      monitor.bestSites(i, t, answer, sites.sortWith { _.fitness > _.fitness })
+      alreadyTicked = interval
+      monitor.bestSites(i, interval * quanta, answer, sites.sortWith { _.fitness > _.fitness })
     }    
   }
   

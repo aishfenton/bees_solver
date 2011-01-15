@@ -27,6 +27,8 @@ class Bee(domain: Domain) {
     this
   }
 
+  def isFeasible = domain.isFeasible
+
   // FIXME side effect is that it marks this domain as used
   def explore(exploreDistance: Double, i: Int): Bee = {
     var aDomain = domain.explore(exploreDistance, i)

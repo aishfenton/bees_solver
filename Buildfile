@@ -13,38 +13,41 @@ define 'BeesSolver' do
   end
 
   # buildr BeesSolver:benchmark[100]
-  task :benchmark, :duration, :needs => :compile do |t, args|
+  task :benchmark, :duration, :set_name, :needs => :compile do |t, args|
     
     raise Exception.new("Duration parameter must be specified!") unless args.duration
         
+    # problems = ["P01E51K05", "P13D121K11", "P14D101K11"]
     problems = ["P01E51K05", "P02E76K10", "P03E101K08", "P04E151K12", "P05E200K17",
                 "P06D51K06", "P07D76K11", "P08D101K09", "P09D151K14", "P10D200K18",
                 "P11E121K07", "P12E101K10", "P13D121K11", "P14D101K11"]
-
-    set_name = "standard"
     
-    run.using :main => ["com.visfleet.beessolver.vrp.BenchmarkRunner", args.duration, set_name, problems.join(",")],
+    run.using :main => ["com.visfleet.beessolver.vrp.BenchmarkRunner", args.duration, args.set_name, problems.join(",")],
               :java_args => ["-server"]
               
     Rake::Task["run"].invoke
     
-    produce_joined_dat(problems, set_name)
-    produce_plot(problems, set_name)
+    produce_joined_dat(problems, args.set_name)
+    produce_plot(problems, args.set_name)
   end
 
 end
 
 def produce_plot(problems, set_name)
   cmd = <<-EOF
-set term pdf;
-set output '#{set_name}.pdf';
-  EOF
+set key right bottom;
+set terminal postscript eps font 'CMUBright-Roman, 10';
+set output '#{set_name}/#{set_name}.eps';
+set xlabel 'Time (secs)';
+set ylabel 'Percentage of Best Known';
+set style line 1 lt 1 lw 1 pt 10 linecolor rgb 'red';
+EOF
 
   series = []
   problems.each_with_index do |problem, i|
-    series << "'#{set_name}/#{set_name}.dat' using 1:#{(3*(i+1))+1} with linespoints ti '#{problem}'"
+    series << "'#{set_name}/#{set_name}.dat' using 1:#{(3*(i+1))+1} with lines ti '#{problem}'"
   end
-  cmd += "plot #{series.join(",")};" 
+  cmd += "plot [] [0.0:1.0] #{series.join(",")}, '#{set_name}/#{set_name}.dat' using 1:(\\$4+\\$7+\\$10+\\$13+\\$16+\\$19+\\$22+\\$25+\\$28+\\$31+\\$34+\\$37+\\$40+\\$43)/14 with linespoints ls 1 ti 'Average';"
 
   `gnuplot -e "#{cmd}"`
 end
