@@ -33,14 +33,14 @@ class Bee(domain: Domain) {
   def explore(exploreDistance: Double, i: Int): Bee = {
     var aDomain = domain.explore(exploreDistance, i)
 
-    var count = 0 
+    var count = 0
     while (World.isUsed(aDomain) || World.isTabu(aDomain)) {  //  || World.isTabu(aDomain)
       count += 1
       var d = math.min(exploreDistance + (count / 100), 0.9)
     
       aDomain = domain.explore(d, i)
     
-      if (count > MAX_RETRIES) 
+      if (count > MAX_RETRIES)
         throw new Exception("Too many retries, stopping now")
     }
 

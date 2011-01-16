@@ -50,21 +50,33 @@ class World(iterations: Int, maxTime: Long, noSites: Int, noWorkerBees: Int, noM
     
     World.clear
 
-    for (i <- 0 until sites.size) {
-      sites(i) = sites(i).explore(noMoves, exploreDistance, i)
-    }
+    val threads = for (i <- 0 until sites.size)
+      yield new Thread() {
+        override def run() {
+          sites(i) = sites(i).explore(noMoves, exploreDistance, i)
+        }
+      }
+    
+    threads.foreach(t => t.start())
+    threads.foreach(t => t.join())
     
     sites = sites.sortWith { _.fitness > _.fitness }
 
     // // Killing off worse site
-    // if (i % 1 == 0 && sites.size > 1)
-    //   sites = sites.slice(0, (sites.size * 0.99).toInt).toArray
-
+    if (i % 3 == 0 && sites.size > 1)
+      sites = sites.slice(0, (sites.size * 0.99).toInt).toArray
+    
     // replacing worse site with bread one
     if (i % 1 == 0) {
       sites(sites.size - 1) = sites(sites.size - 1).mate(sites.head)
     }
     
+    // // True Bees Algorithm
+    // if (i % 1 == 0) {
+    //   for (j <- (sites.size / 5) until sites.size)
+    //     sites(j) = Site.randomPosition(noWorkerBees, domainFunc)
+    // }
+
     if (answer.fitness < sites.head.fitness && sites.head.isFeasible)
       answer = sites.head.bestBee.theDomain
   }
@@ -99,7 +111,7 @@ object World {
 
   def isTabu(d: Domain) = tabu.contains(d.positionHash) // && tabu(d.positionHash) > TabuThreshold
 
-  def isUsed(d: Domain) = usedPositions.contains(d.positionHash) 
+  def isUsed(d: Domain) = usedPositions.contains(d.positionHash)
 
   def makeTabu(d: Domain) = tabu(d.positionHash) = 1
 

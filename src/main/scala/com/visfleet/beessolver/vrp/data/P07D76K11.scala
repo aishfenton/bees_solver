@@ -9,6 +9,7 @@ import com.visfleet.beessolver.vrp.Job
 // COMMENT : (Christophides and Eilon)
 object P07D76K11 extends Problem {
   
+  // Would 12 be better?
   def maxVehicles = 11
   def maxCapacity = 140
   def maxRouteTime = 160

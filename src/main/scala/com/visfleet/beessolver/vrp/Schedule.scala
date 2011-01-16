@@ -99,6 +99,7 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     
     // RANDOM REMOVE
     def randomRemove = {
+      // for (i <- 0 until 2) {
       for (i <- 0 until Random.nextInt((jobs.size * 0.4).toInt)) {
         var route = CollectionUtil.rand(routes)
         if (route.isEmpty) {
@@ -232,8 +233,8 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
       if (bestPos == null || (pos != null && pos._2 < bestPos._2))
         bestPos = pos
     }
-    // val searchSize = (jobs.size * eDistance).toInt
     place(math.max((jobs.size * eDistance).toInt, 3))
+    // place(jobs.size - 1)
         
     // Retry with larger expanded search if fails
     if (bestPos == null) {

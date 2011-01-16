@@ -25,7 +25,7 @@ define 'BeesSolver' do
     run.using :main => ["com.visfleet.beessolver.vrp.BenchmarkRunner", args.duration, args.set_name, problems.join(",")],
               :java_args => ["-server"]
               
-    Rake::Task["run"].invoke
+    # Rake::Task["run"].invoke
     
     produce_joined_dat(problems, args.set_name)
     produce_plot(problems, args.set_name)
@@ -47,7 +47,7 @@ EOF
   problems.each_with_index do |problem, i|
     series << "'#{set_name}/#{set_name}.dat' using 1:#{(3*(i+1))+1} with lines ti '#{problem}'"
   end
-  cmd += "plot [] [0.0:1.0] #{series.join(",")}, '#{set_name}/#{set_name}.dat' using 1:(\\$4+\\$7+\\$10+\\$13+\\$16+\\$19+\\$22+\\$25+\\$28+\\$31+\\$34+\\$37+\\$40+\\$43)/14 with linespoints ls 1 ti 'Average';"
+  cmd += "plot [] [0.8:1.0] #{series.join(",")}, '#{set_name}/#{set_name}.dat' using 1:(\\$4+\\$7+\\$10+\\$13+\\$16+\\$19+\\$22+\\$25+\\$28+\\$31+\\$34+\\$37+\\$40+\\$43)/14 with linespoints ls 1 ti 'Average';"
 
   `gnuplot -e "#{cmd}"`
 end
