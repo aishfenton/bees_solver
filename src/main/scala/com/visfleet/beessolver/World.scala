@@ -39,14 +39,14 @@ class World(iterations: Int, maxTime: Long, noSites: Int, noWorkerBees: Int, noM
         return
 
       doMonitor(i, t)
-      step(i)
+      step(i, t)
     }
     loop
     
     monitor.finished
   }
 
-  def step(i: Int) = {
+  def step(i: Int, t: Long) = {
     
     World.clear
 
@@ -62,14 +62,14 @@ class World(iterations: Int, maxTime: Long, noSites: Int, noWorkerBees: Int, noM
     
     sites = sites.sortWith { _.fitness > _.fitness }
 
-    // // Killing off worse site
-    if (i % 3 == 0 && sites.size > 1)
+    // // Killing off worse sites
+    if (t % 5 == 0 && sites.size > 3)
       sites = sites.slice(0, (sites.size * 0.99).toInt).toArray
     
-    // replacing worse site with bread one
-    if (i % 1 == 0) {
-      sites(sites.size - 1) = sites(sites.size - 1).mate(sites.head)
-    }
+    // replacing worst site with bread one
+    // if (t % 30 == 0) {
+    //   sites(sites.size - 1) = sites(sites.size - 1).mate(sites.head)
+    // }
     
     // // True Bees Algorithm
     // if (i % 1 == 0) {
@@ -103,13 +103,13 @@ class World(iterations: Int, maxTime: Long, noSites: Int, noWorkerBees: Int, noM
 
 object World {
   
-  private val TabuThreshold = 1
+  private val TabuThreshold = 0
   
   private val usedPositions = new LinkedHashMap[String, Boolean]
 
   private val tabu = new HashMap[String, Int]
 
-  def isTabu(d: Domain) = tabu.contains(d.positionHash) // && tabu(d.positionHash) > TabuThreshold
+  def isTabu(d: Domain) = tabu.contains(d.positionHash) && tabu(d.positionHash) > TabuThreshold
 
   def isUsed(d: Domain) = usedPositions.contains(d.positionHash)
 
@@ -117,10 +117,11 @@ object World {
 
   def at(d: Domain) = { 
     usedPositions(d.positionHash) = true;
+
     // if (!tabu.contains(d.positionHash))
-    //   tabu(d.positionHash) = 0    
+    //   tabu(d.positionHash) = 0
     // tabu(d.positionHash) += 1
-    // 
+    
     // if (tabu.size > 100000)
     //   tabu.remove(tabu.head._1)
   }

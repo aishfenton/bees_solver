@@ -34,7 +34,7 @@ class Bee(domain: Domain) {
     var aDomain = domain.explore(exploreDistance, i)
 
     var count = 0
-    while (World.isUsed(aDomain) || World.isTabu(aDomain)) {  //  || World.isTabu(aDomain)
+    while (World.isUsed(aDomain)) {  //  || World.isTabu(aDomain)
       count += 1
       var d = math.min(exploreDistance + (count / 100), 0.9)
     

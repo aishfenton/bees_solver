@@ -9,7 +9,7 @@ import com.visfleet.beessolver.vrp.Job
 // Christofides, Mingozzi and Toth
 object P10D200K18 extends Problem {
   
-  def maxVehicles = 19
+  def maxVehicles = 18
   def maxCapacity = 200
   def maxRouteTime = 200
   def serviceTime = 10

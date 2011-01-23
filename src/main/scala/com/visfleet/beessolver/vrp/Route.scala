@@ -1,21 +1,17 @@
 package com.visfleet.beessolver.vrp;
 
 import scala.collection.mutable.Buffer
+import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
-class Route(depot: Location, maxCapacity: Double, maxRouteTime: Double, var jobs: Buffer[Job] = new ArrayBuffer[Job]) {
+class Route(depot: Location, maxCapacity: Double, maxRouteTime: Double, jobs: IndexedSeq[Job] = Vector.empty) {
 
-  def copy(depot: Location = this.depot,
-           maxCapacity: Double = this.maxCapacity, 
-           maxRouteTime: Double = this.maxRouteTime, 
-           jobs: Buffer[Job] = this.jobs.clone): Route = {
-    new Route(depot, maxCapacity, maxRouteTime, jobs)
-  }
+  // 
+  // Immutable functions
+  // 
 
-  def +=(job: Job): Route = { jobs += job; this }
-  
-  def distance = {
+  val distance = {
     var p = depot
     
     var r = jobs.foldLeft(0.0) { (r, c) => 
@@ -26,36 +22,58 @@ class Route(depot: Location, maxCapacity: Double, maxRouteTime: Double, var jobs
     // and back again
     r + p.distanceTo(depot)
   }
+  val load = jobs.foldLeft(0.0)((r,c) => r + c.quantity)
+  val serviceTime = jobs.foldLeft(0.0)((r,c) => r + c.serviceTime) + this.distance
+  val overtime = math.max(this.serviceTime - maxRouteTime, 0.0)
+  val overload = math.max(this.load - maxCapacity, 0.0)
 
-  def overtime = math.max(this.serviceTime - maxRouteTime, 0.0)
 
-  def overload = math.max(this.load - maxCapacity, 0.0)
+  val indexMap = jobs.zipWithIndex.foldLeft(new HashMap[Job, Int]) { (r, c) => r(c._1) = c._2; r }
   
-  def load = jobs.foldLeft(0.0)((r,c) => r + c.quantity)
-
-  def serviceTime = jobs.foldLeft(0.0)((r,c) => r + c.serviceTime) + distance
- 
-  override def toString = jobs.foldLeft("R:")(_ + _.toString + ",") + "(" + distance + ") (" + load + ") (" + serviceTime + ")"
+  val size = jobs.size
   
-  def removeRandom = CollectionUtil.removeRandom(jobs)
-  
-  def indexOf(job: Job) = jobs.indexOf(job)
+  val isEmpty = jobs.isEmpty
 
-  def insert(idx: Int, job: Job) = jobs.insert(idx, job)
+  def indexOf(job: Job) = indexMap.getOrElse(job, -1)
 
-  def insertEitherSide(idx: Int, job: Job) = {
-    if (Random.nextBoolean) {
-      jobs.insert(idx, job)
-    } else {
-      jobs.insert(idx + 1, job)
-    }
+  def apply(idx: Int) = jobs.apply(idx)
+
+  def copy(depot: Location = this.depot,
+           maxCapacity: Double = this.maxCapacity, 
+           maxRouteTime: Double = this.maxRouteTime, 
+           jobs: IndexedSeq[Job] = this.jobs): Route = {
+    new Route(depot, maxCapacity, maxRouteTime, jobs)
   }
 
-  // distance increase + weight increase 
-  def insertionCost(idx: Int, job: Job) = {
-    // Random.nextDouble
+  override def toString = jobs.foldLeft("R:")(_ + _.toString + ",") + "(" + distance + ") (" + load + ") (" + serviceTime + ")"
+
+  // def exchangeCost(idx: Int, job: Job) = {
+  //   var a: Location = null
+  //   var b: Location = null
+  //   if (idx == 0) {
+  //     a = depot
+  //     b = jobs(idx).location
+  //   } else if (idx == jobs.size) {
+  //     a = jobs(idx - 1).location
+  //     b = depot
+  //   } else {
+  //     a = jobs(idx - 1).location
+  //     b = jobs(idx).location
+  //   }
+  //   
+  //   val existingDist = a.distanceTo(tj.location) + b.distanceTo(tj.location)
+  //   val newDist = a.distanceTo(job.location) + c.distanceTo(job.location)
+  //   
+  //   val w = (this.load - tj.quantity + job.quantity) - this.load
+  //   val t = (this.serviceTime - tj.sericeTime + job.serviceTime + newDist)
+  //   
+  //   newDist - existingDist + w + t
+  // }
+
+  def insertionCost(idx: Int, job: Job) = { 
     var a: Location = null
     var b: Location = null
+
     if (idx == 0) {
       a = depot
       b = jobs(idx).location
@@ -74,14 +92,22 @@ class Route(depot: Location, maxCapacity: Double, maxRouteTime: Double, var jobs
     d + w + t
   }
 
-  def remove(idx: Int) = jobs.remove(idx)
+  // 
+  // Mutable functions
+  // 
 
-  def apply(idx: Int) = jobs.apply(idx)
+  def u(changeFunc: => IndexedSeq[Job]): Route = {
+    this.copy(jobs = changeFunc)
+  }
 
-  def update(idx: Int, job: Job) = jobs.update(idx, job)
-
-  def size = jobs.size
+  def append(job: Job) = u(jobs :+ job)
+  def update(idx: Int, job: Job) = u(jobs.updated(idx, job))
+  def insert(idx: Int, job: Job) = u((jobs.slice(0, idx) :+ job) ++ jobs.slice(idx, jobs.size) )
+  def insertEitherSide(idx: Int, job: Job) = if (Random.nextBoolean) this.insert(idx, job) else this.insert(idx+1, job)
   
-  def isEmpty = jobs.isEmpty
-    
+  def remove(idx: Int) = {
+    val nj = jobs.slice(0, idx) ++ jobs.slice(idx + 1, jobs.size)
+    (this.copy(jobs = nj), jobs(idx))
+  }
+
 }

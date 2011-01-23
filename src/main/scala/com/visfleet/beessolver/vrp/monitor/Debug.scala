@@ -21,17 +21,17 @@ class Debug extends Monitor {
     
     val bestBees = sites.map { _.bestBee.theDomain }.sortWith { _.fitness > _.fitness }
     
-    print(header.format(iteration, duration, bestSoFar.fitness))
+    print(header.format(duration, iteration, bestSoFar.fitness))
 
     sites.foreach ( (site) => {
       val sch = site.bestBee.theDomain.asInstanceOf[Schedule]
       print(detail.format(sch.fitness, sch.distance, sch.overload, sch.overtime, site.avgFitness, site.theAge)) 
     })
     
-    // if (iteration % 500 == 0) {
-    //   println("========= BEST SO FAR ============")
-    //   println(sites.first.bestBee)
-    // }
+    if (duration % 30 == 0) {
+      println("========= BEST SO FAR ============")
+      println(sites.first.bestBee)
+    }
     
   }
 

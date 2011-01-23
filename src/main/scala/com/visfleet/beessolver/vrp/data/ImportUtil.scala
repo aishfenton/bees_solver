@@ -34,7 +34,7 @@ object ImportUtil {
     var routes = new ArrayBuffer[Route]
     
     for (r <- solution) {
-      var jobs = r.map( (id: Int) => jobMap((id + 1).toString) ).toBuffer
+      var jobs = r.map( (id: Int) => jobMap((id + 1).toString) ).toIndexedSeq
       routes += new Route(problem.depot, problem.maxCapacity, problem.maxRouteTime, jobs)
     }
     

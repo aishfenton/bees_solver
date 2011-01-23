@@ -16,7 +16,7 @@ object Runner {
     val clazz = Class.forName("com.visfleet.beessolver.vrp.data." + args(0) + "$")
     problem = clazz.getField("MODULE$").get(null).asInstanceOf[Problem]
 
-    val solver = new World(200000, 60 * 50, 25, 2, 1, 0.4, new Schedule(
+    val solver = new World(2000000, 60 * 50, 2, 1, 1, 0.4, new Schedule(
       problem.maxVehicles,
       problem.depot,
       problem.maxCapacity,

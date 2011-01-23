@@ -37,11 +37,11 @@ class Site(noWorkerBees: Int, domainFunc: => Domain, age: Int = 0, bees: Array[B
       }
     }
         
-    // val avg = positions.foldLeft(0.0)(_ + _.fitness) / positions.size
-    // if (Random.nextDouble < ( (fitness - avg) / 50 ) || age < 100000) {
+    val avg = positions.foldLeft(0.0)(_ + _.fitness) / positions.size
+    if (Random.nextDouble < ( (fitness - avg) / 50 ) || age < 100) {
       positions += bestBee.exploreIfUsed(age / 1000, i)
-      // positions += bestBee.exploreIfUsed(exploreDistance, i)
-    // } else {
+    } 
+    // else {
     //   World.makeTabu(bestBee.theDomain)
     // }
     
@@ -60,7 +60,6 @@ class Site(noWorkerBees: Int, domainFunc: => Domain, age: Int = 0, bees: Array[B
   def bestBee = bees(0)
 
   def mate(seedSite: Site) = {
-    
     var aBees = new ArrayBuffer[Bee]
     aBees ++= bees.slice(0, (this.bees.size / 2.0).floor.toInt)
     aBees ++= bees.slice(0, (seedSite.theBees.size / 2.0).ceil.toInt)
