@@ -1,8 +1,8 @@
 # Bees Solver
 By Aish Fenton
 
-          \    o ^ o    /          vWorkApp.com
-            \ (     ) /            By Aish Fenton
+          \    o ^ o    /         
+            \ (     ) /           
       ______(#########)__________
      /   /  )#########(  \   \   
     /__/__/           \__\___\_
