@@ -19,7 +19,7 @@ Prerequisites are:
   - Buildr (http://buildr.apache.org/)
 
 ## Usage
-Can be run across any of the canonically benchmark problems found in /src/main/scala/com/routably/beessolver/vrp/data. Pass the problem name as an argument as such: 
+Can be run across any of the canonic benchmark problems found in /src/main/scala/com/routably/beessolver/vrp/data. Pass the problem name as an argument to BeeSolver:run task. For example: 
 	
 	buildr BeesSolver:run[P01E51K05]
 
