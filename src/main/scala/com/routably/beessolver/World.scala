@@ -66,17 +66,6 @@ class World(iterations: Int, maxTime: Long, noSites: Int, noWorkerBees: Int, noM
     if (t % 5 == 0 && sites.size > 3)
       sites = sites.slice(0, (sites.size * 0.99).toInt).toArray
     
-    // replacing worst site with bread one
-    // if (t % 30 == 0) {
-    //   sites(sites.size - 1) = sites(sites.size - 1).mate(sites.head)
-    // }
-    
-    // // True Bees Algorithm
-    // if (i % 1 == 0) {
-    //   for (j <- (sites.size / 5) until sites.size)
-    //     sites(j) = Site.randomPosition(noWorkerBees, domainFunc)
-    // }
-
     if (answer.fitness < sites.head.fitness && sites.head.isFeasible)
       answer = sites.head.bestBee.theDomain
   }
@@ -117,13 +106,6 @@ object World {
 
   def at(d: Domain) = { 
     usedPositions(d.positionHash) = true;
-
-    // if (!tabu.contains(d.positionHash))
-    //   tabu(d.positionHash) = 0
-    // tabu(d.positionHash) += 1
-    
-    // if (tabu.size > 100000)
-    //   tabu.remove(tabu.head._1)
   }
 
   def clear = usedPositions.clear

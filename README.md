@@ -18,9 +18,10 @@ Prerequisites are:
   - Scala 2.9.x
   - Buildr (http://buildr.apache.org/)
 
-## Install
-
-    buildr run
+## Usage
+Can be run across any of the canonically benchmark problems found in /src/main/scala/com/routably/beessolver/vrp/data. Pass the problem name as an argument as such: 
+	
+	buildr BeesSolver:run[P01E51K05]
 
 ## Copyright
 

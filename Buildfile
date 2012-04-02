@@ -5,11 +5,9 @@ repositories.remote << 'https://repository.apache.org/content/groups/public/'
 define 'BeesSolver' do
   compile.options.optimise = true
 
-  task :debug, :problem, :needs => :compile do |t, args|
+  task :run, :problem, :needs => :compile do |t, args|
     run.using :main => ["com.routably.beessolver.vrp.Runner", args.problem],
-              :java_args => ["-server"]
-  
-    Rake::Task["run"].invoke
+              :java_args => ["-server"]  
   end
 
   # buildr BeesSolver:benchmark[100]

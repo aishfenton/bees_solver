@@ -15,16 +15,3 @@ case class Location(x: Double, y: Double) {
   }
     
 }
-
-  //   
-  //   def ==(other)
-  //     if !other.instance_of?(Location) 
-  //       return false
-  //     end
-  //     return self.x == other.x && self.y == other.y
-  //   end
-  // 
-  //   def eql?(other)
-  //      return self == other
-  //   end
-  // 

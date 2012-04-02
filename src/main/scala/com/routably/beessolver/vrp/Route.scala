@@ -7,10 +7,6 @@ import scala.util.Random
 
 class Route(depot: Location, maxCapacity: Double, maxRouteTime: Double, jobs: IndexedSeq[Job] = Vector.empty) {
 
-  // 
-  // Immutable functions
-  // 
-
   val distance = {
     var p = depot
     
@@ -47,29 +43,6 @@ class Route(depot: Location, maxCapacity: Double, maxRouteTime: Double, jobs: In
 
   override def toString = jobs.foldLeft("R:")(_ + _.toString + ",") + "(" + distance + ") (" + load + ") (" + serviceTime + ")"
 
-  // def exchangeCost(idx: Int, job: Job) = {
-  //   var a: Location = null
-  //   var b: Location = null
-  //   if (idx == 0) {
-  //     a = depot
-  //     b = jobs(idx).location
-  //   } else if (idx == jobs.size) {
-  //     a = jobs(idx - 1).location
-  //     b = depot
-  //   } else {
-  //     a = jobs(idx - 1).location
-  //     b = jobs(idx).location
-  //   }
-  //   
-  //   val existingDist = a.distanceTo(tj.location) + b.distanceTo(tj.location)
-  //   val newDist = a.distanceTo(job.location) + c.distanceTo(job.location)
-  //   
-  //   val w = (this.load - tj.quantity + job.quantity) - this.load
-  //   val t = (this.serviceTime - tj.sericeTime + job.serviceTime + newDist)
-  //   
-  //   newDist - existingDist + w + t
-  // }
-
   def insertionCost(idx: Int, job: Job) = { 
     var a: Location = null
     var b: Location = null
@@ -91,10 +64,6 @@ class Route(depot: Location, maxCapacity: Double, maxRouteTime: Double, jobs: In
     
     d + w + t
   }
-
-  // 
-  // Mutable functions
-  // 
 
   def u(changeFunc: => IndexedSeq[Job]): Route = {
     this.copy(jobs = changeFunc)

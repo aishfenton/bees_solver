@@ -18,7 +18,6 @@ class Bee(domain: Domain) {
     new Bee(domain)
   }
 
-  // FIXME side effect is that it marks this domain as used
   def exploreIfUsed(exploreDistance: Double, i: Int): Bee = {
     if (World.isUsed(this.domain))
       return this.explore(exploreDistance: Double, i: Int)
@@ -29,12 +28,11 @@ class Bee(domain: Domain) {
 
   def isFeasible = domain.isFeasible
 
-  // FIXME side effect is that it marks this domain as used
   def explore(exploreDistance: Double, i: Int): Bee = {
     var aDomain = domain.explore(exploreDistance, i)
 
     var count = 0
-    while (World.isUsed(aDomain)) {  //  || World.isTabu(aDomain)
+    while (World.isUsed(aDomain)) {
       count += 1
       var d = math.min(exploreDistance + (count / 100), 0.9)
     

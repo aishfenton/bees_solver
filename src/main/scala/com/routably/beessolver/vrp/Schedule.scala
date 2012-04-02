@@ -24,13 +24,11 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
   val serviceTime = routes.foldLeft(0.0)((r,c) => r + c.serviceTime)
 
   val fitness: Double = {
-    // - ( this.distance )
     - ( this.distance + (this.overtime * Penalty) + (this.overload * Penalty) )
   }
 
   Schedule.initNearMatrix(jobs)
   
-  // FIXME how the fuck does this work!!?!??!?
   def myCopy() = this.copy()
   
   def copy(maxVehicles: Int = this.maxVehicles, 
@@ -57,8 +55,6 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
 
     while (usedJobs.size < jobs.size) {
       insertNearestRandomly(newRoutes, CollectionUtil.selectRandomAndUnused(jobs, usedJobs), 0.02)
-      // var route = CollectionUtil.rand(newRoutes)
-      // route += CollectionUtil.selectRandomAndUnused(jobs, usedJobs)
     }
 
     this.copy(routes = newRoutes)
@@ -74,70 +70,9 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
 
   def isFeasible = (this.overtime + this.overload) == 0
 
-  // def mate(domain: Domain) {
-  //   p2 = domain.asInstanceOf[Schedule]
-  //   
-  //   var newRoutes = routes.map(_.copy())
-  //   newRoutes += routes.map(_.copy)
-  //   newRoutes.addAndRemove(p2.routes)
-  //   
-  //   newRoutes.repair
-  //   
-  //   this.copy(routes = newRoutes)
-  // }
-
 // -----------
 // Private
 // -----------
-
-  // 012 -> swap|move
-  // private def lambdaOpt(routes: Buffer[Route], lambda: Int, eDistance: Double) = {
-  // 
-  //   val r_offset = Random.nextInt(routes.size)
-  //   val j_offset = Random.nextInt(routes(r_idx).size)
-  //   
-  //   def findNJ(job: Job, offset: Int) = indexOf(routes, nearestJob(job, offset))
-  // 
-  //   def findNJWithCost(offset: Int): (Position, Double) = {
-  //     val idxs = findNJ(offset)
-  // 
-  //     if (idxs._1 == -1)
-  //       return null;
-  //     
-  //     val l = routes(idxs._1).insertionCost(idxs._2, job)
-  //     val r = routes(idxs._1).insertionCost(idxs._2 + 1, job)
-  //     
-  //     if (l < r) (idxs, l) else ((idxs._1, idxs._2 + 1), r)
-  //   }
-  //   
-  //   
-  //   def calcCost(searchSize: Int) = for (offset <- 0 until searchSize) {
-  //     var bestPos: (Position, Double) = null
-  //     val pos = findNJWithCost(offset)
-  //           
-  //     if (bestPos == null || (pos != null && pos._2 < bestPos._2))
-  //       bestPos = pos
-  //       
-  //     bestPos
-  //   }
-  // 
-  //   def exchange(job: Job) = {
-  //     
-  //     for (i <- 0 until (jobs.size * eDistance))
-  //       calcCost(job, offset)
-  //       
-  //   }
-  // 
-  //   for (i <- 0 until routes.size) {
-  //     for (j <- 0 until routes(r_idx).size) {
-  //       
-  //       // job = select route(i + r_offset).jobs(j + offset)
-  //       // exchange(job)
-  //       
-  //     }
-  //   }
-  //   
-  // }
 
   private def lns(routes: Buffer[Route], eDistance: Double) = {
     
@@ -145,10 +80,9 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
 
     // RANDOM REMOVE
     def randomRemove(number: Int) = {
-      // for (i <- 0 until 2) {
       for (i <- 0 until number) {
         val r_idx = Random.nextInt(routes.size)
-        // empty? then replensish
+
         if (routes(r_idx).isEmpty) {
           if (!removed.isEmpty)
             routes(r_idx) = routes(r_idx).append(CollectionUtil.removeRandom(removed))
@@ -157,10 +91,10 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
           routes(r_idx) = result._1
           removed += result._2
         }
+		
       }
     } 
 
-    // SEQ REMOVE
     def seqRemove(number: Int): Unit = {
               
       def removeEm(job: Job): Unit = for (i <- 0 until number) {
@@ -189,77 +123,12 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     val number = Random.nextInt((jobs.size * 0.4).toInt)
     if (Random.nextBoolean) seqRemove(number) else randomRemove(number)
     
-    // Insert 
     while (removed.nonEmpty) {
       var job = CollectionUtil.removeRandom(removed)
       insertNearest(routes, job, eDistance)
     }
     
   }
-
-  // private def insertNearest2(routes: Buffer[Route], removed: Buffer[Job], eDistance: Double) = {
-  //       
-  //   def nearestJobIndex(job: Job, offset: Int) = {
-  //     indexOf(routes, nearestJob(job, offset))
-  //   }
-  // 
-  //   def getCost(job: Job, offset: Int): (Double, Position) = {
-  //     val idxs = nearestJobIndex(job, offset)
-  //   
-  //     if (idxs._1 == -1)
-  //       return null;
-  //     
-  //     val l = routes(idxs._1).insertionCost(idxs._2, job)
-  //     val r = routes(idxs._1).insertionCost(idxs._2 + 1, job)
-  //     
-  //     if (l < r) (l, idxs) else (r, (idxs._1, idxs._2 + 1))
-  //   }
-  // 
-  //   def findMinCostPos(job: Job, searchSize: Int) = {
-  //     var minCost: (Double, Position) = null
-  // 
-  //     for (offset <- 0 until searchSize) {
-  //       val cost = getCost(job, offset)
-  //           
-  //       if (minCost == null || (cost != null && cost._1 < minCost._1))
-  //         minCost = cost
-  //     }
-  // 
-  //     minCost
-  //   }
-  // 
-  //   def calcCosts(removed: Buffer[Job], searchSize: Int) = {
-  //     var costs = new ArrayBuffer[(Double, Position, Job)]
-  //     
-  //     for (job <- removed) {
-  //       var cost = findMinCostPos(job, searchSize)
-  //       // if (costs == null)
-  //       //   cost = findMinCostPos(job, jobs.size-1)
-  // 
-  //       costs += Tuple3(cost._1, cost._2, job)
-  //     }
-  //     
-  //     costs.sortWith { _._1 < _._1 }
-  //   }
-  //   
-  //   // def updateCosts(route: Route, costs: ArrayBuffer[(Double, Position, Job)], searchSize: Int) = {
-  //   //   val entries = routeMap(route)
-  //   //   for (entry <- entries)
-  //   //     costs(entry) = findMinCostPos(entry, searchSize)
-  //   //   
-  //   //   costs.sortsWith { _._1 < _._1 }
-  //   // }
-  // 
-  //   val searchSize = jobs.size / 2
-  // 
-  //   while (removed.nonEmpty) {
-  //     val c = calcCosts(removed, searchSize).head
-  //     val bestIdxs = c._2
-  //     routes(bestIdxs._1).insert(bestIdxs._2, c._3)
-  //     removed.remove(removed.indexOf(c._3))
-  //   }
-  // 
-  // }
 
   private def findNJ(routes: Buffer[Route], job: Job, offset: Int) = {
     indexOf(routes, nearestJob(job, offset))
@@ -288,12 +157,10 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
         bestPos = pos
     }
     place(math.max((jobs.size * eDistance).toInt, 3))
-    // place(jobs.size - 1)
         
     // Retry with larger expanded search if fails
     if (bestPos == null) {
       place(jobs.size)
-      // println("OMG!!! IT HAPPENED")
     }
     
     val bestIdxs = bestPos._1
@@ -315,7 +182,6 @@ class Schedule(maxVehicles: Int, depot: Location, maxCapacity: Double,
     }
     
     routes(idxs._1) = routes(idxs._1).insertEitherSide(idxs._2, job)
-    // routes(idxs._1).insert(idxs._2, job)
   }
   
   private def nearestJob(job: Job, offset: Int) = { Schedule.nearMatrix(job)(offset % Schedule.nearMatrix(job).size) }
