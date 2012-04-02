@@ -1,21 +1,33 @@
 # Bees Solver
 By Aish Fenton
 
+An algorithm for solving the Vehicle Routing Problem (VRP) using a bees inspired meta-heuristic. 
+
           \    o ^ o    /         
             \ (     ) /           
-      ______(#########)__________
-     /   /  )#########(  \   \   
-    /__/__/           \__\___\_
-     \____  (#########)\  \     )
-         \__(#########) \___\__) 
+      ______(#########)______
+     /   /  )#########(  \   \ 
+    /__/__/           \__\__\__\
+     \____  (#########)\  ____/
+         \__(#########)__/ 
            \/(       )\/        
               (#####)           
                (###)            
                  !              
-Description goes here.
+
 
 ## Install
 
-== Copyright
+The following are prerequisites:
 
-Copyright (c) 2010 Aisha Fenton. See LICENSE for details.
+  - Scala 2.9.x
+  - Buildr (http://buildr.apache.org/)
+
+## Install
+
+    buildr run
+
+
+## Copyright
+
+Copyright (c) 2010 Aish Fenton. See LICENSE for details.

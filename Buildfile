@@ -6,7 +6,7 @@ define 'BeesSolver' do
   compile.options.optimise = true
 
   task :debug, :problem, :needs => :compile do |t, args|
-    run.using :main => ["com.visfleet.beessolver.vrp.Runner", args.problem],
+    run.using :main => ["com.routably.beessolver.vrp.Runner", args.problem],
               :java_args => ["-server"]
   
     Rake::Task["run"].invoke
@@ -17,20 +17,17 @@ define 'BeesSolver' do
     
     raise Exception.new("Duration parameter must be specified!") unless args.duration
         
-    # problems = ["P04E151K12", "P05E200K17",
-    #             "P07D76K11", "P09D151K14", "P10D200K18",
-    #             "P11E121K07", "P13D121K11",]
     problems = ["P01E51K05", "P02E76K10", "P03E101K08", "P04E151K12", "P05E200K17",
                 "P06D51K06", "P07D76K11", "P08D101K09", "P09D151K14", "P10D200K18",
                 "P11E121K07", "P12E101K10", "P13D121K11", "P14D101K11"]
     
-    run.using :main => ["com.visfleet.beessolver.vrp.BenchmarkRunner", args.duration, args.set_name, problems.join(",")],
+    run.using :main => ["com.routably.beessolver.vrp.Runner ", args.duration, args.set_name, problems.join(",")],
               :java_args => ["-server"]
               
-    # Rake::Task["run"].invoke
+    Rake::Task["run"].invoke
     
-    produce_joined_dat(problems, args.set_name)
-    produce_plot(problems, args.set_name)
+    # produce_joined_dat(problems, args.set_name)
+    # produce_plot(problems, args.set_name)
   end
 
 end
